@@ -54,6 +54,94 @@ app.post('/books',async(req,res)=>{
  res.send(result)
  
 })
+//get by category name
+app.get('/booksbycategory/:category_name',async(req,res)=>{
+  const category_name = req.params.category_name;
+  query={category_name: category_name }
+    const result = await booksCollection.find(query).toArray();
+  res.send(result);
+})
+
+// get operation for update books
+app.get('/books/:id',async(req,res)=>{
+  const id= req.params.id;
+  const query ={_id: new ObjectId(id)}
+ 
+  const result = await booksCollection.findOne(query);
+  res.send(result);
+})
+
+app.put('/books/:id',async(req,res)=>{
+  const id =req.params.id;
+  console.log(id);
+  const filter={_id:new ObjectId(id)}
+  const options={upsert:true};
+  const updatedbook=req.body;
+  const book={
+    $set:{
+      name:updatedbook.name,
+      photo:updatedbook.photo,
+      category_name:updatedbook.updateCategoryName,
+      author_name:updatedbook. author_name,
+      rating:updatedbook.rating,
+      quantity:updatedbook.quantity,
+      desp:updatedbook.desp,
+     
+    }
+  }
+  console.log(book);
+  const result = await booksCollection.updateOne(filter,book,options);
+  res.send(result)
+})
+// app.get('/books/:id', async (req, res) => {
+//   const id = req.params.id;
+//   const query = { _id: new ObjectId(id) };
+
+//   try {
+//     const result = await booksCollection.findOne(query);
+//     if (result) {
+//       res.json(result);
+//     } else {
+//       res.status(404).send('Book not found');
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
+
+// app.put('/books/:id', async (req, res) => {
+//   const id = req.params.id;
+//   console.log(id);
+//   const filter = {_id:new ObjectId(id)};
+//   const options={upsert:true};
+//   const updatedBook = req.body;
+
+//   const book={
+//     $set:{
+//       name:updatedBook.name,
+//       photo:updatedBook.photo,
+//       category_name:updatedBook.updateCategoryName,
+//       author_name:updatedBook.author_name,
+//       rating:updatedBook.rating,
+//       quantity:updatedBook.quantity,
+//       desp:updatedBook.desp,
+//     }
+//   };
+
+//   try {
+//     const result = await booksCollection.updateOne(filter,book,options);
+//     if (result.modifiedCount === 1) {
+//       res.json({ message: 'Book updated successfully' });
+//     } else {
+//       res.status(404).send('Book not found');
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
+
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
       // Ensures that the client will close when you finish/error
