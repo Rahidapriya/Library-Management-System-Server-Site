@@ -33,6 +33,7 @@ async function run() {
     //   await client.db("admin").command({ ping: 1 });
     const bookCategoryCollection=client.db('libraryDB').collection('bookcategorycard')
     const booksCollection=client.db('libraryDB').collection('books')
+    const addBorrowedCollection=client.db('libraryDB').collection('addtoborrow')
 //home page a book category niyechi
     app.get('/bookcategorycard',async(req,res)=>{
       const cursor=bookCategoryCollection.find();
@@ -93,54 +94,22 @@ app.put('/books/:id',async(req,res)=>{
   const result = await booksCollection.updateOne(filter,book,options);
   res.send(result)
 })
-// app.get('/books/:id', async (req, res) => {
-//   const id = req.params.id;
-//   const query = { _id: new ObjectId(id) };
+//  add to borrowed books
 
-//   try {
-//     const result = await booksCollection.findOne(query);
-//     if (result) {
-//       res.json(result);
-//     } else {
-//       res.status(404).send('Book not found');
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
+app.get('/addtoborrow',async(req,res)=>{
+ 
+  const cursor=addBorrowedCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+app.post('/addtoborrow',async(req,res)=>{
+  const addtoborrow=req.body;
+  console.log(addtoborrow); 
 
-// app.put('/books/:id', async (req, res) => {
-//   const id = req.params.id;
-//   console.log(id);
-//   const filter = {_id:new ObjectId(id)};
-//   const options={upsert:true};
-//   const updatedBook = req.body;
-
-//   const book={
-//     $set:{
-//       name:updatedBook.name,
-//       photo:updatedBook.photo,
-//       category_name:updatedBook.updateCategoryName,
-//       author_name:updatedBook.author_name,
-//       rating:updatedBook.rating,
-//       quantity:updatedBook.quantity,
-//       desp:updatedBook.desp,
-//     }
-//   };
-
-//   try {
-//     const result = await booksCollection.updateOne(filter,book,options);
-//     if (result.modifiedCount === 1) {
-//       res.json({ message: 'Book updated successfully' });
-//     } else {
-//       res.status(404).send('Book not found');
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
+ const result=await addBorrowedCollection.insertOne(addtoborrow);
+ res.send(result)
+ 
+})
 
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
