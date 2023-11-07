@@ -110,6 +110,109 @@ app.post('/addtoborrow',async(req,res)=>{
  res.send(result)
  
 })
+//remove book/return book
+app.delete('/addtoborrow/:id', async(req,res)=>{
+  const id =req.params.id;
+  console.log(id);
+  const query={_id:new ObjectId(id)}
+  const result = await addBorrowedCollection.deleteOne(query);
+  res.send(result);
+})
+// app.post('/addtoborrow', async (req, res) => {
+//   const addtoborrow = req.body;
+
+//   try {
+//     // Insert the book to be borrowed into the 'addtoborrow' collection
+//     const result = await addBorrowedCollection.insertOne(addtoborrow);
+
+//     if (result.insertedId) {
+//       // Book borrowed successfully
+//       const bookId = addtoborrow._id; // Assuming _id is the book's unique identifier
+
+//       // Decrease the quantity of the borrowed book by 1
+//       const borrowedBook = await booksCollection.findOne({ _id: new ObjectId(bookId) });
+
+//       if (borrowedBook) {
+//         const updatedQuantity = borrowedBook.quantity - 1;
+        
+//         // Update the book's quantity in the 'books' collection
+//         await booksCollection.updateOne({ _id: new ObjectId(bookId) }, {
+//           $set: { quantity: updatedQuantity }
+//         });
+
+//         return res.status(200).json({ message: "Book Borrowed Successfully" });
+//       }
+//     }
+
+//     return res.status(500).json({ error: "Failed to borrow the book" });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+//////////////////////////
+// app.post('/addtoborrow', async (req, res) => {
+//   const addtoborrow = req.body;
+
+//   try {
+//     // Insert the book to be borrowed into the 'addtoborrow' collection
+//     const result = await addBorrowedCollection.insertOne(addtoborrow);
+
+//     if (result.insertedId) {
+//       // Book borrowed successfully
+//       const bookId = addtoborrow._id; // Assuming _id is the book's unique identifier
+
+//       // Update the book's quantity in the 'books' collection, decrementing it by 1
+//       await booksCollection.updateOne(
+//         { _id: new ObjectId(bookId) },
+//         { $inc: { quantity: -1 } } // Decrement the quantity by 1
+//       );
+
+//       return res.status(200).json({ message: "Book Borrowed Successfully" });
+//     }
+
+//     return res.status(500).json({ error: "Failed to borrow the book" });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+///////////////////////////
+// app.post('/addtoborrow', async (req, res) => {
+//   const addtoborrow = req.body;
+
+//   try {
+//     // Insert the book to be borrowed into the 'addtoborrow' collection
+//     const result = await addBorrowedCollection.insertOne(addtoborrow);
+
+//     if (result.insertedId) {
+//       // Book borrowed successfully
+//       const bookId = addtoborrow._id; // Assuming _id is the book's unique identifier
+
+//       // Decrease the quantity of the borrowed book by 1
+//       const borrowedBook = await booksCollection.findOne({ _id: new ObjectId(bookId) });
+
+//       if (borrowedBook) {
+//         const updatedQuantity = borrowedBook.quantity - 1;
+        
+//         // Update the book's quantity in the 'books' collection
+//         await booksCollection.updateOne({ _id: new ObjectId(bookId) }, {
+//           $set: { quantity: updatedQuantity }
+//         });
+
+//         return res.status(200).json({ message: "Book Borrowed Successfully" });
+//       }
+//     }
+
+//     return res.status(500).json({ error: "Failed to borrow the book" });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
 
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
