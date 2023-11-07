@@ -6,7 +6,13 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port=process.env.PORT || 5005;
 
 //middleware
-app.use(cors());
+app.use(cors({
+  origin:[
+    'https://id-8-a11.web.app'
+  ],
+  credentials:true,
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 
 
@@ -27,10 +33,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-      // Connect the client to the server	(optional starting in v4.7)
-    //   await client.connect();
-      // Send a ping to confirm a successful connection
-    //   await client.db("admin").command({ ping: 1 });
+     
     const bookCategoryCollection=client.db('libraryDB').collection('bookcategorycard')
     const booksCollection=client.db('libraryDB').collection('books')
     const addBorrowedCollection=client.db('libraryDB').collection('addtoborrow')
