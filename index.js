@@ -15,7 +15,7 @@ app.use(cors({
     'https://id-8-a11.web.app'
   ],
   credentials:true,
-  optionsSuccessStatus: 200
+  optionSuccessStatus: 200
 }));
 app.use(cookieParser());
 app.use(express.json());
