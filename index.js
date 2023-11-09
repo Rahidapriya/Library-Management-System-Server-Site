@@ -240,41 +240,57 @@ app.delete('/addtoborrow/:id', async(req,res)=>{
 //borrow and quantity reduce
 app.post('/addtoborrow', async (req, res) => {
   const addtoborrow = req.body;
+  const bookname = req.body.name;
+  const userEmail = req.body.userEmail;
+  console.log(bookname, userEmail);
 
   try {
-    const result = await addBorrowedCollection.insertOne(addtoborrow);
+    // Check if the user has already borrowed the book
+    const output = await addBorrowedCollection.findOne({
+      name: bookname,
+      userEmail: userEmail,
+    });
 
-    if (result.insertedId) {
-      const bookId = addtoborrow.bookId;
-      console.log('bookId',bookId);
+    if (!output) {
+      const result = await addBorrowedCollection.insertOne(addtoborrow);
 
-      // Decrease the quantity of the borrowed book by 1
-      const borrowedBook = await booksCollection.findOne({ bookId: bookId });
+      if (result.insertedId) {
+        const bookId = addtoborrow.bookId;
+        console.log('bookId', bookId);
 
-      if (borrowedBook) {
-        const updatedQuantity = borrowedBook.quantity - 1;
-        console.log('updated quantity',updatedQuantity);
+        // Decrease the quantity of the borrowed book by 1
+        const borrowedBook = await booksCollection.findOne({ bookId: bookId });
 
-        if (updatedQuantity >= 0) { // Ensure quantity doesn't go below zero
-          await booksCollection.updateOne({ bookId: bookId }, {
-            $set: { quantity: updatedQuantity }
-          });
+        if (borrowedBook) {
+          const updatedQuantity = borrowedBook.quantity - 1;
+          console.log('updated quantity', updatedQuantity);
 
-          return res.status(200).json({ message: "Book Borrowed Successfully" });
+          if (updatedQuantity >= 0) {
+            // Ensure quantity doesn't go below zero
+            await booksCollection.updateOne(
+              { bookId: bookId },
+              { $set: { quantity: updatedQuantity } }
+            );
+
+            return res.status(200).json({ message: 'Book Borrowed Successfully' });
+          } else {
+            return res.status(400).json({ error: 'Book is out of stock' });
+          }
         } else {
-          return res.status(400).json({ error: "Book is out of stock" });
+          return res.status(404).json({ error: 'Book not found' });
         }
-      } else {
-        return res.status(404).json({ error: "Book not found" });
       }
+
+      return res.status(500).json({ error: 'Failed to borrow the book' });
     }
 
-    return res.status(500).json({ error: "Failed to borrow the book" });
+    return res.status(400).json({ error: 'You have already borrowed that book' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 //////////////////////////
 // app.post('/addtoborrow', async (req, res) => {
