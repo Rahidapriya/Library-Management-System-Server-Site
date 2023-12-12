@@ -12,7 +12,7 @@ const port=process.env.PORT || 5005;
 //middleware
 app.use(cors({
   origin:[
-    'https://id-8-a11.web.app'
+    'https://id-8-a11.web.app','http://localhost:5005/'
   ],
   credentials:true,
   optionSuccessStatus: 200
@@ -194,12 +194,20 @@ app.get('/addtoborrow',async(req,res)=>{
  
 // })
 // remove book/return book
-app.delete('/addtoborrow/:id', async(req,res)=>{
+app.post('/deleteborrow/:id', async(req,res)=>{
   const id =req.params.id;
+  const bookId=req.body.bookId;
   console.log(id);
+  console.log(req.body.bookId);
+  
   const query={_id:new ObjectId(id)}
   const result = await addBorrowedCollection.deleteOne(query);
-  res.send(result);
+
+  const result2= await booksCollection.updateOne(
+            {bookId:bookId},
+            { $inc: { quantity: +1 } }
+          );
+  res.send({result,result2});
 })
 
 
@@ -372,5 +380,3 @@ app.listen(port,()=>{
 })
 
 
-//id-8-a11 
-//ttGqo7TJsB0XcYPV
